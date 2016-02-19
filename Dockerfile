@@ -9,7 +9,7 @@ WORKDIR /usr/local/transporter_linux_amd64
 
 RUN DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
-    apt-get install -qy --no-install-recommends curl && \
+    apt-get install -qy --no-install-recommends curl ca-certificates && \
     apt-get autoremove --purge && \
     apt-get clean
 
