@@ -4,8 +4,10 @@
 #
 ###
 FROM ubuntu:14.04
+MAINTAINER Francis Dortort <francis@dortort.com>
 
-WORKDIR /usr/local/transporter_linux_amd64
+ENV TRANSPORTER_VERSION 0.1.1
+ENV TRANSPORTER_TAG v${TRANSPORTER_VERSION}
 
 RUN DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
@@ -13,8 +15,9 @@ RUN DEBIAN_FRONTEND=noninteractive && \
     apt-get autoremove --purge && \
     apt-get clean
 
-RUN curl -kL https://github.com/compose/transporter/releases/download/v0.1.1/transporter_linux_amd64.tar.gz > transporter.tar.gz && \
-    tar -zxf transporter.tar.gz -C /usr/local
+RUN curl --verbose -SLO "https://github.com/compose/transporter/releases/download/${TRANSPORTER_TAG}/transporter_linux_amd64.tar.gz" \
+    && tar -zxf "transporter_linux_amd64.tar.gz" -C /usr/local/bin --strip-components=1 \
+    && rm "transporter_linux_amd64.tar.gz"
 
 COPY ./docker-entrypoint.sh /
 
