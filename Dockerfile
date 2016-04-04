@@ -1,23 +1,26 @@
 ###
 #
-# A ubuntu based ETL using Compose's open-sourced "Transporter"
+# A golang based ETL using Compose's open-sourced "Transporter"
 #
 ###
-FROM ubuntu:14.04
+FROM golang:1.6-onbuild
 MAINTAINER Francis Dortort <francis@dortort.com>
 
-ENV TRANSPORTER_VERSION 0.1.1
-ENV TRANSPORTER_TAG v${TRANSPORTER_VERSION}
+RUN mkdir -p /go
+ENV GOPATH /go
+RUN cd /go
+RUN go get github.com/tools/godep
+RUN bin/godep restore
+RUN bin/godep go build -a ./cmd/...
+RUN mkdir -p src/github.com/compose pkg bin
+RUN cd src/github.com/compose
+RUN git clone https://github.com/ndouba/transporter
+RUN cd transporter
+RUN git checkout patch-1
+RUN go get -a ./cmd/...
+RUN go build -a ./cmd/...
 
-RUN DEBIAN_FRONTEND=noninteractive && \
-    apt-get update && \
-    apt-get install -qy --no-install-recommends curl ca-certificates && \
-    apt-get autoremove --purge && \
-    apt-get clean
-
-RUN curl --verbose -SLO "https://github.com/compose/transporter/releases/download/${TRANSPORTER_TAG}/transporter_linux_amd64.tar.gz" \
-    && tar -zxf "transporter_linux_amd64.tar.gz" -C /usr/local/bin --strip-components=1 \
-    && rm "transporter_linux_amd64.tar.gz"
+WORKDIR /go/bin
 
 COPY ./docker-entrypoint.sh /
 
