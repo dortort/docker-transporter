@@ -3,7 +3,7 @@
 # A goland based ETL using Compose's open-sourced "Transporter"
 #
 ###
-FROM golang:1.6-onbuild
+FROM golang:1.5.3
 MAINTAINER Francis Dortort <francis@dortort.com>
 
 ENV GOPATH /go
