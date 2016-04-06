@@ -8,8 +8,8 @@ MAINTAINER Francis Dortort <francis@dortort.com>
 
 ENV GOPATH /go
 RUN mkdir -p /go/src/github.com/compose /go/pkg /go/bin
-RUN cd /go/src/github.com/compose && git clone https://github.com/ndouba/transporter && \
-    cd transporter && git checkout patch-1
+RUN cd /go/src/github.com/compose && git clone https://github.com/dortort/transporter && \
+    cd transporter && git checkout es-v2.x-compat
 
 RUN cd /go/src/github.com/compose/transporter && go get github.com/tools/godep
 RUN cd /go/src/github.com/compose/transporter && /go/bin/godep restore
