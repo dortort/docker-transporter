@@ -1,28 +1,23 @@
 ###
 #
-# A centos based ETL using Compose's open-sourced "Transporter"
+# A goland based ETL using Compose's open-sourced "Transporter"
 #
 ###
-FROM centos:7
+FROM golang:1.6-onbuild
 MAINTAINER Francis Dortort <francis@dortort.com>
 
-RUN yum install -yq golang git
+ENV GOPATH /go
+RUN mkdir -p /go/src/github.com/compose /go/pkg /go/bin
+RUN cd /go/src/github.com/compose && git clone https://github.com/ndouba/transporter && \
+    cd transporter && git checkout patch-1
 
-RUN mkdir -p /opt/go
-ENV GOPATH /opt/go
-RUN cd /opt/go
-RUN go get github.com/tools/godep
-RUN bin/godep restore
-RUN bin/godep go build -a ./cmd/...
-RUN mkdir -p src/github.com/compose pkg bin
-RUN cd src/github.com/compose
-RUN git clone https://github.com/ndouba/transporter
-RUN cd transporter
-RUN git checkout patch-1
-RUN go get -a ./cmd/...
-RUN go build -a ./cmd/...
+RUN cd /go/src/github.com/compose/transporter && go get github.com/tools/godep
+RUN cd /go/src/github.com/compose/transporter && /go/bin/godep restore
+RUN cd /go/src/github.com/compose/transporter && /go/bin/godep go build -a ./cmd/...
+RUN cd /go/src/github.com/compose/transporter && go get -a ./cmd/...
+RUN cd /go/src/github.com/compose/transporter && go build -a ./cmd/...
 
-WORKDIR /opt/go/bin
+WORKDIR /go/bin
 
 COPY ./docker-entrypoint.sh /
 
