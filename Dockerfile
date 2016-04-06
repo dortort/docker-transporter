@@ -1,14 +1,16 @@
 ###
 #
-# A golang based ETL using Compose's open-sourced "Transporter"
+# A centos based ETL using Compose's open-sourced "Transporter"
 #
 ###
-FROM golang:1.6-onbuild
+FROM centos:7
 MAINTAINER Francis Dortort <francis@dortort.com>
 
-RUN mkdir -p /go
-ENV GOPATH /go
-RUN cd /go
+RUN yum install -yq golang git
+
+RUN mkdir -p /opt/go
+ENV GOPATH /opt/go
+RUN cd /opt/go
 RUN go get github.com/tools/godep
 RUN bin/godep restore
 RUN bin/godep go build -a ./cmd/...
@@ -20,7 +22,7 @@ RUN git checkout patch-1
 RUN go get -a ./cmd/...
 RUN go build -a ./cmd/...
 
-WORKDIR /go/bin
+WORKDIR /opt/go/bin
 
 COPY ./docker-entrypoint.sh /
 
